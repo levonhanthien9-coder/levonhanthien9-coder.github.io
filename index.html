@@ -288,12 +288,41 @@
                 document.getElementById('history-panel').style.display = 'block';
 
                 // Render Admin
-                let aH = `<table><tr><th>Khách</th><th>Thông tin</th><th>Đơn</th><th>Thao tác</th></tr>`;
-                orders.forEach(o => {
-                    aH += `<tr><td>${o.user}</td><td style="font-size:11px">${o.phone}<br>${o.address}</td><td>${o.product} x${o.qty}</td>
-                    <td><button onclick="updateStatus(${o.id},'Đang giao')">Giao</button><button onclick="updateStatus(${o.id},'Xong')">Xong</button></td></tr>`;
-                });
-                document.getElementById('admin-order-list').innerHTML = aH + `</table>`;
+                <!-- Thay thế đoạn "// Render Admin" ở cuối code của bạn bằng đoạn này -->
+
+// Render Admin
+let aH = `<table>
+    <tr>
+        <th>Khách hàng</th>
+        <th>Sản phẩm</th>
+        <th>Trạng thái</th>
+        <th>Thao tác quản lý</th>
+    </tr>`;
+
+orders.forEach(o => {
+    // Xác định màu sắc cho từng trạng thái cho dễ nhìn
+    let statusColor = "#f1c40f"; // Chờ xử lý: Vàng
+    if(o.status === 'Đang giao') statusColor = "#3498db"; // Xanh dương
+    if(o.status === 'Đã hoàn thành') statusColor = "#2ecc71"; // Xanh lá
+
+    aH += `<tr>
+        <td style="text-align:left; font-size:12px;">
+            <b>${o.user}</b><br>
+            📞 ${o.phone}<br>
+            📍 ${o.address}
+        </td>
+        <td>${o.product} <br> <small>(x${o.qty})</small></td>
+        <td style="color:${statusColor}; font-weight:bold">${o.status}</td>
+        <td>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <button onclick="updateStatus(${o.id},'Đang chuẩn bị')" style="background:#e67e22; color:white; border:none; padding:5px; cursor:pointer; border-radius:3px;">Chuẩn bị</button>
+                <button onclick="updateStatus(${o.id},'Đang giao')" style="background:#3498db; color:white; border:none; padding:5px; cursor:pointer; border-radius:3px;">Giao hàng</button>
+                <button onclick="updateStatus(${o.id},'Đã hoàn thành')" style="background:#2ecc71; color:white; border:none; padding:5px; cursor:pointer; border-radius:3px;">Hoàn tất</button>
+            </div>
+        </td>
+    </tr>`;
+});
+document.getElementById('admin-order-list').innerHTML = aH + `</table>`;
             });
         }
 
