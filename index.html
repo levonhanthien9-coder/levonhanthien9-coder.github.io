@@ -24,7 +24,6 @@
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; }
         .modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; width: 380px; max-height: 90vh; overflow-y: auto; }
         .modal input { width: 100%; padding: 12px; margin: 8px 0; box-sizing: border-box; border: 1px solid #ddd; border-radius: 5px; }
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; }
     </style>
 </head>
 <body>
@@ -44,51 +43,69 @@
 
     <!-- ADMIN PANEL -->
     <div id="admin-panel" class="section-box">
-        <h3>🛠 QUẢN TRỊ VIÊN: KHO HÀNG & TÀI CHÍNH</h3>
-        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-            <div style="flex: 1; border-right: 1px solid #999; padding-right: 10px;">
+        <h3>🛠 QUẢN TRỊ VIÊN</h3>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px; border-right: 1px solid #999; padding-right: 10px;">
                 <h4>Cộng tiền User</h4>
                 <input type="text" id="target-user" placeholder="Tên User">
                 <input type="number" id="add-amount" placeholder="Số tiền">
-                <button onclick="adminAddMoney()" style="background:var(--dark); color:white; padding: 5px 15px;">Xác nhận</button>
+                <button onclick="adminAddMoney()" style="background:var(--dark); color:white; padding: 10px; width:100%;">CỘNG TIỀN</button>
             </div>
-            <div style="flex: 1;">
-                <h4>Cập nhật Kho hàng</h4>
-                <select id="select-fish" style="padding: 5px;"></select>
-                <input type="number" id="new-stock" placeholder="Số lượng mới" style="width: 100px;">
-                <button onclick="updateStock()" style="background:var(--dark); color:white; padding: 5px 15px;">Cập nhật</button>
+            <div style="flex: 1; min-width: 200px;">
+                <h4>Nhập kho cá</h4>
+                <select id="select-fish" style="width:100%; padding: 10px; margin-bottom: 8px;"></select>
+                <input type="number" id="new-stock" placeholder="Số lượng mới">
+                <button onclick="updateStock()" style="background:var(--dark); color:white; padding: 10px; width:100%;">CẬP NHẬT KHO</button>
             </div>
         </div>
-        <h4>Đơn hàng cần xử lý:</h4>
-        <div id="admin-order-list"></div>
+        <h4>Đơn hàng hệ thống:</h4>
+        <div id="admin-order-list" style="overflow-x: auto;"></div>
     </div>
 
     <div id="history-panel" class="section-box">
         <h3>📜 LỊCH SỬ ĐƠN HÀNG</h3>
-        <div id="user-order-list"></div>
+        <div id="user-order-list" style="overflow-x: auto;"></div>
     </div>
 
     <div class="container" id="product-grid"></div>
 
-    <!-- MODAL MUA HÀNG (MỚI) -->
+    <!-- MODALS -->
+    <div class="overlay" id="register-overlay">
+        <div class="modal">
+            <h2>ĐĂNG KÝ</h2>
+            <input type="text" id="reg-user" placeholder="Tên tài khoản">
+            <input type="password" id="reg-pass" placeholder="Mật khẩu">
+            <input type="password" id="reg-confirm" placeholder="Xác nhận mật khẩu">
+            <button onclick="handleRegister()" style="width:100%; padding:10px; background:var(--success); color:white; border:none; cursor:pointer;">TẠO TÀI KHOẢN</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:gray; width:100%; margin-top:10px; cursor:pointer;">Hủy</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="login-overlay">
+        <div class="modal">
+            <h2>ĐĂNG NHẬP</h2>
+            <input type="text" id="login-user" placeholder="Tên tài khoản">
+            <input type="password" id="login-pass" placeholder="Mật khẩu">
+            <button onclick="handleLogin()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; cursor:pointer;">VÀO CỬA HÀNG</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:gray; width:100%; margin-top:10px; cursor:pointer;">Hủy</button>
+        </div>
+    </div>
+
     <div class="overlay" id="buy-overlay">
         <div class="modal">
             <h2 id="buy-title">XÁC NHẬN MUA</h2>
             <p id="buy-price-info"></p>
+            <label>Số lượng:</label>
             <input type="number" id="order-qty" value="1" min="1" oninput="calculateTotal()">
             <input type="text" id="order-phone" placeholder="Số điện thoại">
             <input type="text" id="order-address" placeholder="Địa chỉ nhận hàng">
             <div style="background: #eee; padding: 10px; border-radius: 5px; margin: 10px 0;">
-                Tổng thanh toán: <b id="buy-total" style="color:red">0đ</b>
+                Tổng: <b id="buy-total" style="color:red">0đ</b>
             </div>
-            <button onclick="confirmPurchase()" style="width:100%; padding:15px; background:var(--success); color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">XÁC NHẬN ĐẶT HÀNG</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:gray; width:100%; margin-top:10px; cursor:pointer;">Hủy bỏ</button>
+            <button onclick="confirmPurchase()" style="width:100%; padding:15px; background:var(--success); color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">ĐẶT HÀNG NGAY</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:gray; width:100%; margin-top:10px; cursor:pointer;">Hủy</button>
         </div>
     </div>
-
-    <!-- MODAL ĐĂNG KÝ/ĐĂNG NHẬP (Giữ nguyên cũ) -->
-    <div class="overlay" id="register-overlay"><div class="modal"><h2>ĐĂNG KÝ</h2><input type="text" id="reg-user" placeholder="Tên"><input type="password" id="reg-pass" placeholder="Mật khẩu"><input type="password" id="reg-confirm" placeholder="Xác nhận"><button onclick="handleRegister()" style="width:100%; padding:10px; background:var(--success); color:white; border:none;">TẠO TÀI KHOẢN</button><button onclick="closeModals()">Hủy</button></div></div>
-    <div class="overlay" id="login-overlay"><div class="modal"><h2>ĐĂNG NHẬP</h2><input type="text" id="login-user" placeholder="Tên"><input type="password" id="login-pass" placeholder="Mật khẩu"><button onclick="handleLogin()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none;">VÀO CỬA HÀNG</button><button onclick="closeModals()">Hủy</button></div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
@@ -106,191 +123,179 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
         let currentFishSelecting = null;
 
-        // Khởi tạo kho hàng nếu chưa có (Chỉ chạy 1 lần)
+        window.openModal = (id) => { document.getElementById(id).style.display = 'block'; };
+        window.closeModals = () => { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); };
+
+        // --- AUTH FUNCTIONS (ĐÃ FIX LỖI) ---
+        window.handleRegister = async () => {
+            const u = document.getElementById('reg-user').value.trim();
+            const p = document.getElementById('reg-pass').value;
+            const c = document.getElementById('reg-confirm').value;
+            if(!u || !p) return alert("Vui lòng nhập tên và mật khẩu!");
+            if(p !== c) return alert("Mật khẩu không khớp!");
+
+            const snapshot = await get(child(ref(db), `users/${u}`));
+            if (snapshot.exists()) return alert("Tài khoản đã tồn tại!");
+
+            await set(ref(db, 'users/' + u), {
+                name: u, pass: p, balance: 0, role: u === 'admin' ? 'admin' : 'user'
+            });
+            alert("Đăng ký thành công!");
+            closeModals();
+        };
+
+        window.handleLogin = async () => {
+            const u = document.getElementById('login-user').value.trim();
+            const p = document.getElementById('login-pass').value;
+            const snapshot = await get(child(ref(db), `users/${u}`));
+            if (snapshot.exists()) {
+                if(snapshot.val().pass === p) {
+                    localStorage.setItem('currentUser', u);
+                    location.reload();
+                } else alert("Sai mật khẩu!");
+            } else alert("Tài khoản không tồn tại!");
+        };
+
+        window.logout = () => { localStorage.removeItem('currentUser'); location.reload(); };
+
+        // --- KHO HÀNG & MUA HÀNG ---
         async function initStock() {
-            const snapshot = await get(child(ref(db), 'fishes'));
-            if (!snapshot.exists()) {
-                const initialFishes = {
+            const snap = await get(child(ref(db), 'fishes'));
+            if (!snap.exists()) {
+                set(ref(db, 'fishes'), {
                     koi: { name: "Cá Koi Nhật", price: 1500000, stock: 10, img: "https://images.unsplash.com/photo-1517361225306-73723bad67d7?w=400" },
-                    rong: { name: "Cá Rồng Huyết", price: 5000000, stock: 5, img: "https://images.unsplash.com/photo-1625244695851-1fc8739942b0?w=400" },
-                    betta: { name: "Cá Betta", price: 200000, stock: 50, img: "https://images.unsplash.com/photo-1522060290919-28f7a4a19be1?w=400" }
-                };
-                set(ref(db, 'fishes'), initialFishes);
+                    rong: { name: "Cá Rồng Huyết Hán", price: 5000000, stock: 5, img: "https://images.unsplash.com/photo-1625244695851-1fc8739942b0?w=400" },
+                    betta: { name: "Cá Betta Galaxy", price: 200000, stock: 50, img: "https://images.unsplash.com/photo-1522060290919-28f7a4a19be1?w=400" }
+                });
             }
         }
 
-        window.openModal = (id) => { document.getElementById(id).style.display = 'block'; };
-        window.closeModals = () => { 
-            document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none');
-        };
-
-        // --- MUA HÀNG MỚI ---
         window.buyFishTrigger = (key, name, price) => {
             const cur = localStorage.getItem('currentUser');
-            if(!cur) return alert("Vui lòng đăng nhập!");
+            if(!cur) return alert("Hãy đăng nhập trước!");
             currentFishSelecting = { key, name, price };
-            document.getElementById('buy-title').innerText = "MUA " + name.toUpperCase();
-            document.getElementById('buy-price-info').innerText = "Giá: " + price.toLocaleString() + "đ/con";
-            document.getElementById('order-qty').value = 1;
+            document.getElementById('buy-title').innerText = "MUA " + name;
+            document.getElementById('buy-price-info').innerText = "Đơn giá: " + price.toLocaleString() + "đ";
             calculateTotal();
             openModal('buy-overlay');
         };
 
         window.calculateTotal = () => {
-            const qty = document.getElementById('order-qty').value || 0;
-            const total = qty * currentFishSelecting.price;
-            document.getElementById('buy-total').innerText = total.toLocaleString() + "đ";
+            const qty = parseInt(document.getElementById('order-qty').value) || 0;
+            document.getElementById('buy-total').innerText = (qty * currentFishSelecting.price).toLocaleString() + "đ";
         };
 
         window.confirmPurchase = async () => {
             const qty = parseInt(document.getElementById('order-qty').value);
-            const phone = document.getElementById('order-phone').value;
-            const addr = document.getElementById('order-address').value;
+            const phone = document.getElementById('order-phone').value.trim();
+            const addr = document.getElementById('order-address').value.trim();
             const cur = localStorage.getItem('currentUser');
 
-            if(!phone || !addr || qty <= 0) return alert("Vui lòng nhập đầy đủ thông tin!");
+            if(!phone || !addr || qty <= 0) return alert("Vui lòng nhập đủ thông tin!");
 
             const userSnap = await get(child(ref(db), `users/${cur}`));
             const fishSnap = await get(child(ref(db), `fishes/${currentFishSelecting.key}`));
             
             const user = userSnap.val();
             const fish = fishSnap.val();
-            const totalCost = qty * fish.price;
+            const total = qty * fish.price;
 
-            if(fish.stock < qty) return alert("Kho không đủ cá!");
-            if(user.balance < totalCost) return alert("Bạn không đủ tiền!");
+            if(fish.stock < qty) return alert("Trong kho chỉ còn " + fish.stock + " con!");
+            if(user.balance < total) return alert("Bạn không đủ tiền!");
 
-            // Trừ tiền, trừ kho, tạo đơn
-            await update(ref(db, `users/${cur}`), { balance: user.balance - totalCost });
+            await update(ref(db, `users/${cur}`), { balance: user.balance - total });
             await update(ref(db, `fishes/${currentFishSelecting.key}`), { stock: fish.stock - qty });
             
-            const orderId = Date.now();
-            await set(ref(db, 'orders/' + orderId), {
-                id: orderId, user: cur, product: fish.name, qty: qty, 
-                price: totalCost, phone: phone, address: addr,
+            const id = Date.now();
+            await set(ref(db, 'orders/' + id), {
+                id, user: cur, product: fish.name, qty, price: total, phone, address: addr,
                 status: 'Chờ xử lý', time: new Date().toLocaleString()
             });
 
-            alert("Đặt hàng thành công!");
+            alert("Đã đặt hàng!");
             closeModals();
         };
 
-        // --- ADMIN FUNCTIONS ---
+        // --- ADMIN ---
+        window.adminAddMoney = async () => {
+            const t = document.getElementById('target-user').value.trim();
+            const m = parseInt(document.getElementById('add-amount').value);
+            const snap = await get(child(ref(db), `users/${t}`));
+            if(snap.exists()) {
+                update(ref(db, `users/${t}`), { balance: (snap.val().balance || 0) + m });
+                alert("Đã cộng tiền thành công!");
+            } else alert("User không tồn tại!");
+        };
+
         window.updateStock = () => {
             const key = document.getElementById('select-fish').value;
             const qty = parseInt(document.getElementById('new-stock').value);
+            if(!key || isNaN(qty)) return alert("Nhập số lượng!");
             update(ref(db, `fishes/${key}`), { stock: qty });
             alert("Đã cập nhật kho!");
         };
 
-        window.adminAddMoney = async () => {
-            const t = document.getElementById('target-user').value;
-            const m = parseInt(document.getElementById('add-amount').value);
-            const snapshot = await get(child(ref(db), `users/${t}`));
-            if(snapshot.exists()) {
-                update(ref(db, `users/${t}`), { balance: (snapshot.val().balance || 0) + m });
-                alert("Đã cộng tiền!");
-            } else alert("Không thấy user!");
-        };
+        window.updateStatus = (id, st) => { update(ref(db, `orders/${id}`), { status: st }); };
 
-        window.updateStatus = (orderId, newStatus) => {
-            update(ref(db, `orders/${orderId}`), { status: newStatus });
-        };
-
-        // --- APP LOGIC ---
+        // --- INIT ---
         function initApp() {
             initStock();
             const cur = localStorage.getItem('currentUser');
-            
-            // Theo dõi Kho cá & Render sản phẩm
-            onValue(ref(db, 'fishes'), (snapshot) => {
-                const fishesData = snapshot.val();
-                const grid = document.getElementById('product-grid');
-                const selectFish = document.getElementById('select-fish');
-                grid.innerHTML = '';
-                selectFish.innerHTML = '';
 
-                for(let key in fishesData) {
-                    const f = fishesData[key];
-                    // Render UI
-                    grid.innerHTML += `
-                        <div class="fish-card">
-                            <span class="stock-tag">Kho: ${f.stock}</span>
-                            <img src="${f.img}">
-                            <h3>${f.name}</h3>
-                            <p style="color:red; font-weight:bold">${f.price.toLocaleString()}đ</p>
-                            <button class="btn-buy" ${f.stock <= 0 ? 'disabled' : ''} 
-                                onclick="buyFishTrigger('${key}', '${f.name}', ${f.price})">
-                                ${f.stock <= 0 ? 'HẾT HÀNG' : 'MUA NGAY'}
-                            </button>
-                        </div>`;
-                    // Render Admin Select
-                    selectFish.innerHTML += `<option value="${key}">${f.name}</option>`;
+            onValue(ref(db, 'fishes'), (snap) => {
+                const data = snap.val();
+                const grid = document.getElementById('product-grid');
+                const sel = document.getElementById('select-fish');
+                grid.innerHTML = ''; sel.innerHTML = '';
+                for(let k in data) {
+                    const f = data[k];
+                    grid.innerHTML += `<div class="fish-card">
+                        <span class="stock-tag">Kho: ${f.stock}</span>
+                        <img src="${f.img}"><h3>${f.name}</h3>
+                        <p style="color:red; font-weight:bold">${f.price.toLocaleString()}đ</p>
+                        <button class="btn-buy" ${f.stock <= 0 ? 'disabled' : ''} onclick="buyFishTrigger('${k}','${f.name}',${f.price})">
+                            ${f.stock <= 0 ? 'HẾT HÀNG' : 'MUA NGAY'}
+                        </button>
+                    </div>`;
+                    sel.innerHTML += `<option value="${k}">${f.name}</option>`;
                 }
             });
 
             if(!cur) return;
 
-            // Theo dõi User Info
-            onValue(ref(db, `users/${cur}`), (snapshot) => {
-                const user = snapshot.val();
-                if(!user) return;
+            onValue(ref(db, `users/${cur}`), (snap) => {
+                const u = snap.val();
+                if(!u) return;
                 document.getElementById('auth-buttons').style.display = 'none';
                 document.getElementById('user-info-bar').style.display = 'block';
                 document.getElementById('display-name').innerText = cur;
-                document.getElementById('display-balance').innerText = (user.balance || 0).toLocaleString();
-                if(user.role === 'admin') document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('display-balance').innerText = (u.balance || 0).toLocaleString();
+                if(u.role === 'admin') document.getElementById('admin-panel').style.display = 'block';
             });
 
-            // Theo dõi Orders
-            onValue(ref(db, 'orders'), (snapshot) => {
-                const orders = snapshot.val() || {};
-                renderUserOrders(cur, orders);
-                if(document.getElementById('admin-panel').style.display === 'block') renderAdminOrders(orders);
+            onValue(ref(db, 'orders'), (snap) => {
+                const data = snap.val() || {};
+                const orders = Object.values(data).reverse();
+                
+                // Render User
+                let uH = `<table><tr><th>Cá</th><th>SL</th><th>Tổng</th><th>Trạng thái</th></tr>`;
+                orders.filter(o => o.user === cur).forEach(o => {
+                    uH += `<tr><td>${o.product}</td><td>${o.qty}</td><td>${o.price.toLocaleString()}</td><td>${o.status}</td></tr>`;
+                });
+                document.getElementById('user-order-list').innerHTML = uH + `</table>`;
+                document.getElementById('history-panel').style.display = 'block';
+
+                // Render Admin
+                let aH = `<table><tr><th>Khách</th><th>Thông tin</th><th>Đơn</th><th>Thao tác</th></tr>`;
+                orders.forEach(o => {
+                    aH += `<tr><td>${o.user}</td><td style="font-size:11px">${o.phone}<br>${o.address}</td><td>${o.product} x${o.qty}</td>
+                    <td><button onclick="updateStatus(${o.id},'Đang giao')">Giao</button><button onclick="updateStatus(${o.id},'Xong')">Xong</button></td></tr>`;
+                });
+                document.getElementById('admin-order-list').innerHTML = aH + `</table>`;
             });
         }
-
-        function renderUserOrders(username, allOrders) {
-            document.getElementById('history-panel').style.display = 'block';
-            let html = `<table><tr><th>Sản phẩm</th><th>SL</th><th>Tổng</th><th>Trạng thái</th></tr>`;
-            const myOrders = Object.values(allOrders).filter(o => o.user === username).reverse();
-            myOrders.forEach(o => {
-                html += `<tr><td>${o.product}</td><td>${o.qty}</td><td>${o.price.toLocaleString()}</td>
-                <td><span class="status-badge" style="background:${getStatusColor(o.status)}">${o.status}</span></td></tr>`;
-            });
-            document.getElementById('user-order-list').innerHTML = html + `</table>`;
-        }
-
-        function renderAdminOrders(allOrders) {
-            let html = `<table><tr><th>Khách</th><th>SĐT/Địa chỉ</th><th>Sản phẩm/SL</th><th>Thao tác</th></tr>`;
-            Object.values(allOrders).reverse().forEach(o => {
-                html += `<tr>
-                    <td><b>${o.user}</b></td>
-                    <td style="font-size:12px">${o.phone}<br>${o.address}</td>
-                    <td>${o.product} (x${o.qty})</td>
-                    <td>
-                        <button onclick="updateStatus(${o.id}, 'Đang chuẩn bị')">Chuẩn bị</button>
-                        <button onclick="updateStatus(${o.id}, 'Đang giao')">Giao</button>
-                        <button onclick="updateStatus(${o.id}, 'Đã giao')">Xong</button>
-                    </td></tr>`;
-            });
-            document.getElementById('admin-order-list').innerHTML = html + `</table>`;
-        }
-
-        function getStatusColor(s) {
-            if(s === 'Đang chuẩn bị') return '#ff9f43';
-            if(s === 'Đang giao') return '#0984e3';
-            if(s === 'Đã giao') return '#4cd137';
-            return '#7f8c8d';
-        }
-
-        // --- AUTH (Giữ nguyên cũ) ---
-        window.handleRegister = async () => { /* code đăng ký cũ */ };
-        window.handleLogin = async () => { /* code đăng nhập cũ */ };
-        window.logout = () => { localStorage.removeItem('currentUser'); location.reload(); };
 
         initApp();
     </script>
