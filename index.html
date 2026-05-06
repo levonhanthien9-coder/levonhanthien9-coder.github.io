@@ -2,192 +2,146 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cửa Hàng Công Nghệ</title>
-    <!-- Chèn Font chữ từ Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    
+    <title>Tech Shop Pro</title>
     <style>
-        :root {
-            --primary-color: #ff4757;
-            --dark-color: #2f3542;
-            --light-bg: #f1f2f6;
+        /* CSS Giao diện */
+        body { font-family: sans-serif; background: #f4f4f4; margin: 0; }
+        .modal { 
+            display: none; /* Mặc định ẩn */
+            position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); 
+            background: white; padding: 2rem; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); z-index: 1000;
+            border-radius: 10px;
         }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--light-bg);
-            margin: 0;
-            padding: 20px;
+        .overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 999;
         }
-
-        h1 { text-align: center; color: var(--dark-color); margin-bottom: 40px; }
-
-        /* Container chứa các sản phẩm */
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Card sản phẩm */
-        .product-card {
-            background: #fff;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            transition: all 0.4s ease;
-            position: relative;
-        }
-
-        .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        }
-
-        /* Hiệu ứng hình ảnh */
-        .product-image {
-            width: 100%;
-            height: 250px;
-            overflow: hidden;
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .product-card:hover .product-image img {
-            transform: scale(1.1);
-        }
-
-        /* Thông tin sản phẩm */
-        .product-info {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .product-info h3 {
-            margin: 10px 0;
-            font-size: 1.2rem;
-            color: var(--dark-color);
-        }
-
-        .price {
-            color: var(--primary-color);
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-        }
-
-        /* Nút mua hàng với hiệu ứng */
-        .btn-add {
-            background: var(--dark-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            width: 100%;
-            font-weight: 500;
-        }
-
-        .btn-add:hover {
-            background: var(--primary-color);
-        }
-
-        /* Label giảm giá */
-        .badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: var(--primary-color);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            z-index: 1;
-        }
+        nav { background: #222; color: white; padding: 1rem; display: flex; justify-content: space-between; }
+        button { cursor: pointer; padding: 8px 15px; }
+        #admin-panel { background: #ffd32a; padding: 20px; display: none; margin: 20px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-    <h1>SẢN PHẨM NỔI BẬT</h1>
+    <nav>
+        <div style="font-size: 1.5rem; font-weight: bold;">MY STORE</div>
+        <div id="auth-buttons">
+            <button onclick="openLogin()">Đăng nhập / Đăng ký</button>
+        </div>
+        <div id="user-info" style="display: none;">
+            Chào <span id="user-name"></span> | Ví: <span id="user-balance">0</span>đ
+            <button onclick="logout()">Thoát</button>
+        </div>
+    </nav>
 
-    <div class="container" id="shop-container">
-        <!-- Sản phẩm sẽ được render bằng JS ở đây -->
+    <!-- Khu vực Admin -->
+    <div id="admin-panel">
+        <h3>Hệ thống Admin (Cộng/Trừ tiền)</h3>
+        <input type="text" id="target-user" placeholder="Tên User">
+        <input type="number" id="amount" placeholder="Số tiền (Vd: 50000)">
+        <button onclick="adminAdjustMoney()">Xác nhận</button>
+    </div>
+
+    <!-- Modal và Overlay -->
+    <div id="overlay" class="overlay" onclick="closeLogin()"></div>
+    <div id="login-modal" class="modal">
+        <h2>Đăng nhập hệ thống</h2>
+        <input type="text" id="username" placeholder="Tên tài khoản" style="display:block; width:100%; margin-bottom:10px; padding:10px;">
+        <input type="password" id="password" placeholder="Mật khẩu" style="display:block; width:100%; margin-bottom:10px; padding:10px;">
+        <button onclick="handleLogin()" style="width:100%; background: #05c46b; color:white; border:none;">Vào ngay</button>
+        <p style="font-size: 12px; color: #666;">*Admin: admin | MK: 123</p>
     </div>
 
     <script>
-        // Dữ liệu mẫu (Giả lập từ Database)
-        const products = [
-            { id: 1, name: "Laptop Gaming Pro", price: "24.500.000đ", img: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?q=80&w=500", sale: "Hot" },
-            { id: 2, name: "Bàn phím Cơ RGB", price: "1.200.000đ", img: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?q=80&w=500", sale: "-10%" },
-            { id: 3, name: "Chuột không dây", price: "850.000đ", img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=500", sale: "" },
-            { id: 4, name: "Tai nghe chống ồn", price: "3.200.000đ", img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=500", sale: "New" }
-        ];
-
-        const container = document.getElementById('shop-container');
-
-        // Hàm tạo card sản phẩm
-        function renderProducts() {
-            products.forEach(p => {
-                container.innerHTML += `
-                    <div class="product-card">
-                        ${p.sale ? `<div class="badge">${p.sale}</div>` : ''}
-                        <div class="product-image">
-                            <img src="${p.img}" alt="${p.name}">
-                        </div>
-                        <div class="product-info">
-                            <h3>${p.name}</h3>
-                            <div class="price">${p.price}</div>
-                            <button class="btn-add" onclick="addToCart('${p.name}')">Thêm vào giỏ</button>
-                        </div>
-                    </div>
-                `;
-            });
+        // 1. Khởi tạo Admin mặc định
+        if (!localStorage.getItem('user_admin')) {
+            localStorage.setItem('user_admin', JSON.stringify({ name: 'Admin', pass: '123', balance: 1000000, role: 'admin' }));
         }
 
-        function addToCart(name) {
-            alert(`Đã thêm ${name} vào giỏ hàng thành công!`);
+        // 2. Các hàm đóng mở Modal
+        function openLogin() {
+            document.getElementById('login-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
         }
 
-        renderProducts();
+        function closeLogin() {
+            document.getElementById('login-modal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // 3. Xử lý Đăng nhập
+        function handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+
+            if(!u || !p) return alert("Vui lòng nhập đủ!");
+
+            let userData = localStorage.getItem('user_' + u);
+
+            if (userData) {
+                let user = JSON.parse(userData);
+                if (user.pass === p) {
+                    loginSuccess(u, user);
+                } else {
+                    alert("Sai mật khẩu!");
+                }
+            } else {
+                // Tự đăng ký nếu user chưa tồn tại
+                let newUser = { name: u, pass: p, balance: 0, role: 'user' };
+                localStorage.setItem('user_' + u, JSON.stringify(newUser));
+                loginSuccess(u, newUser);
+                alert("Đã tạo tài khoản mới!");
+            }
+        }
+
+        function loginSuccess(username, data) {
+            localStorage.setItem('currentUser', username);
+            closeLogin();
+            renderUI();
+        }
+
+        function renderUI() {
+            const currentUN = localStorage.getItem('currentUser');
+            if (currentUN) {
+                const data = JSON.parse(localStorage.getItem('user_' + currentUN));
+                document.getElementById('auth-buttons').style.display = 'none';
+                document.getElementById('user-info').style.display = 'block';
+                document.getElementById('user-name').innerText = currentUN;
+                document.getElementById('user-balance').innerText = data.balance.toLocaleString();
+
+                if (data.role === 'admin') {
+                    document.getElementById('admin-panel').style.display = 'block';
+                }
+            }
+        }
+
+        // 4. Admin Cộng tiền
+        function adminAdjustMoney() {
+            const target = document.getElementById('target-user').value;
+            const cash = parseInt(document.getElementById('amount').value);
+            const targetData = localStorage.getItem('user_' + target);
+
+            if (targetData) {
+                let user = JSON.parse(targetData);
+                user.balance += cash;
+                localStorage.setItem('user_' + target, JSON.stringify(user));
+                alert("Thành công! Số dư mới của " + target + " là: " + user.balance);
+                renderUI(); // Cập nhật lại màn hình
+            } else {
+                alert("Không tìm thấy User này!");
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            location.reload();
+        }
+
+        // Chạy kiểm tra khi vừa load trang
+        renderUI();
     </script>
-    <nav style="background: #2f3542; padding: 15px; display: flex; justify-content: space-between; align-items: center; color: white;">
-    <div style="font-weight: bold; font-size: 1.5rem;">TECH SHOP</div>
-    <div id="user-tools">
-        <button onclick="showModal('login-modal')" style="background: #ff4757; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Đăng nhập / Đăng ký</button>
-    </div>
-</nav>
-
-<div id="user-info" style="display:none; background: #dfe4ea; padding: 10px; text-align: right; font-weight: bold;">
-    Chào <span id="display-name"></span> | Số dư: <span id="display-balance" style="color: #ff4757;">0</span>đ 
-    <button onclick="logout()" style="margin-left:10px;">Thoát</button>
-</div>
-
-<div id="login-modal" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.3); z-index: 100;">
-    <h3>Đăng Nhập</h3>
-    <input type="text" id="login-user" placeholder="Tên đăng nhập" style="display:block; margin-bottom:10px; width:100%; padding: 8px;">
-    <input type="password" id="login-pass" placeholder="Mật khẩu" style="display:block; margin-bottom:10px; width:100%; padding: 8px;">
-    <button onclick="handleLogin()" style="width:100%; background: #2f3542; color: white; padding: 10px; border: none; cursor: pointer;">Vào hệ thống</button>
-    <p style="font-size: 0.8rem; margin-top: 10px;">Admin: **admin** / MK: **123**</p>
-    <button onclick="closeModal('login-modal')" style="margin-top:10px; border:none; background:none; color:blue; cursor:pointer;">Đóng</button>
-</div>
-
-<div id="admin-panel" style="display:none; background: #ffa502; padding: 20px; margin: 20px auto; max-width: 1200px; border-radius: 10px;">
-    <h3>🛠 QUẢN TRỊ VIÊN (ADMIN)</h3>
-    <p>Cộng/Trừ tiền cho User (Nhập số âm để trừ):</p>
-    <input type="text" id="target-user" placeholder="Tên tài khoản người dùng">
-    <input type="number" id="amount" placeholder="Số tiền (VD: 500000)">
-    <button onclick="adjustMoney()">Xác nhận thay đổi</button>
-</div>
-
-<div class="container" id="shop-container" style="margin-top: 20px;"></div>
 </body>
 </html>
