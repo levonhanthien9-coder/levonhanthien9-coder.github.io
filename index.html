@@ -2,180 +2,256 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Cửa Hàng Cá Cảnh - Đỉnh Nóc Kịch Trần</title>
+    <title>Aqua Store - Quản Lý Đơn Hàng Pro</title>
     <style>
-        :root { --primary: #00a8ff; --dark: #2f3640; --gold: #fbc531; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f5f6fa; margin: 0; }
+        :root { --primary: #00a8ff; --dark: #2f3640; --gold: #fbc531; --success: #4cd137; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f6fa; margin: 0; padding-bottom: 50px; }
         
-        /* Navbar */
         nav { background: var(--dark); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 24px; font-weight: bold; color: var(--primary); }
         .btn-auth { background: var(--primary); border: none; padding: 10px 20px; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; }
 
-        /* Thông báo người dùng & Admin */
         #user-info-bar { background: #dcdde1; padding: 10px 5%; display: none; text-align: right; border-bottom: 2px solid var(--primary); }
-        #admin-panel { display: none; background: var(--gold); padding: 20px 5%; text-align: center; border-bottom: 2px solid #e1b12c; }
-        input { padding: 8px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        /* Admin & History Sections */
+        .section-box { background: white; padding: 20px; margin: 20px 5%; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        #admin-panel { background: var(--gold); display: none; }
+        #history-panel { display: none; }
 
-        /* Danh sách sản phẩm Cá */
-        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; padding: 40px 5%; }
-        .fish-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.3s; text-align: center; padding-bottom: 20px; }
-        .fish-card:hover { transform: translateY(-10px); }
-        .fish-card img { width: 100%; height: 200px; object-fit: cover; }
-        .btn-buy { background: var(--dark); color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-buy:hover { background: #c23616; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background: var(--dark); color: white; }
 
-        /* Modal */
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; }
-        .modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 40px; border-radius: 15px; width: 320px; text-align: center; }
+        /* Products */
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px 5%; }
+        .fish-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; }
+        .fish-card img { width: 100%; height: 180px; object-fit: cover; }
+        .btn-buy { background: var(--dark); color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-bottom: 15px; }
+
+        /* Modals */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; }
+        .modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; width: 350px; }
+        .modal input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .status-preparing { background: #ff9f43; color: white; }
+        .status-shipping { background: #0984e3; color: white; }
+        .status-done { background: #4cd137; color: white; }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo">🐟 AQUA STORE</div>
+        <div style="font-size: 24px; font-weight: bold;">🐟 AQUA STORE</div>
         <div id="auth-buttons">
-            <button class="btn-auth" onclick="toggleModal(true)">ĐĂNG NHẬP / ĐĂNG KÝ</button>
+            <button class="btn-auth" onclick="openModal('login-modal')">ĐĂNG NHẬP</button>
+            <button class="btn-auth" style="background:#487eb0" onclick="openModal('register-modal')">ĐĂNG KÝ</button>
         </div>
     </nav>
 
     <div id="user-info-bar">
-        Chào mừng, <b id="display-name">User</b> | Ví tiền: <b id="display-balance" style="color:red">0</b>đ 
-        <button onclick="logout()" style="margin-left: 15px; cursor: pointer;">Thoát</button>
+        Chào, <b id="display-name"></b> | Ví: <b id="display-balance" style="color:red">0</b>đ 
+        <button onclick="logout()">Thoát</button>
     </div>
 
-    <div id="admin-panel">
-        <h3 style="margin:0 0 10px 0;">🛠 BẢNG ĐIỀU KHIỂN ADMIN</h3>
-        <input type="text" id="target-user" placeholder="Nhập tên User">
-        <input type="number" id="add-amount" placeholder="Số tiền cộng/trừ">
-        <button onclick="adminAction()" style="padding: 8px 15px; cursor: pointer; background: #2f3640; color: white; border: none; border-radius: 4px;">XÁC NHẬN CỘNG TIỀN</button>
+    <!-- ADMIN PANEL -->
+    <div id="admin-panel" class="section-box">
+        <h3>🛠 QUẢN TRỊ VIÊN: QUẢN LÝ ĐƠN HÀNG & TIỀN</h3>
+        <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #666;">
+            <input type="text" id="target-user" placeholder="Tên User">
+            <input type="number" id="add-amount" placeholder="Số tiền">
+            <button onclick="adminAddMoney()">CỘNG TIỀN</button>
+        </div>
+        <h4>Tất cả đơn hàng hệ thống:</h4>
+        <div id="admin-order-list"></div>
     </div>
 
-    <div class="container" id="product-grid">
-        <!-- Cá sẽ được hiện ở đây -->
+    <!-- USER HISTORY -->
+    <div id="history-panel" class="section-box">
+        <h3>📜 LỊCH SỬ MUA HÀNG & THEO DÕI ĐƠN</h3>
+        <div id="user-order-list"></div>
     </div>
 
-    <!-- Login Modal -->
+    <div class="container" id="product-grid"></div>
+
+    <!-- MODAL ĐĂNG KÝ -->
+    <div class="overlay" id="register-overlay">
+        <div class="modal">
+            <h2>ĐĂNG KÝ</h2>
+            <input type="text" id="reg-user" placeholder="Tên tài khoản">
+            <input type="password" id="reg-pass" placeholder="Mật khẩu">
+            <input type="password" id="reg-confirm" placeholder="Xác nhận mật khẩu">
+            <button onclick="handleRegister()" style="width:100%; padding:10px; background:var(--success); color:white; border:none; cursor:pointer;">TẠO TÀI KHOẢN</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:gray; cursor:pointer; margin-top:10px;">Hủy</button>
+        </div>
+    </div>
+
+    <!-- MODAL ĐĂNG NHẬP -->
     <div class="overlay" id="login-overlay">
         <div class="modal">
-            <h2 style="color: var(--dark);">ĐĂNG NHẬP</h2>
-            <input type="text" id="username" placeholder="Tên tài khoản" style="width: 100%; box-sizing: border-box;">
-            <input type="password" id="password" placeholder="Mật khẩu" style="width: 100%; box-sizing: border-box;">
-            <button onclick="handleLogin()" style="width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold;">VÀO TRANG CHỦ</button>
-            <p style="font-size: 12px; color: #777; margin-top: 15px;">Admin mặc định: <b>admin</b> / MK: <b>123</b></p>
-            <button onclick="toggleModal(false)" style="background: none; border: none; color: #777; cursor: pointer;">Đóng</button>
+            <h2>ĐĂNG NHẬP</h2>
+            <input type="text" id="login-user" placeholder="Tên tài khoản">
+            <input type="password" id="login-pass" placeholder="Mật khẩu">
+            <button onclick="handleLogin()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; cursor:pointer;">VÀO CỬA HÀNG</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:gray; cursor:pointer; margin-top:10px;">Hủy</button>
         </div>
     </div>
 
     <script>
-        // 1. Dữ liệu các loại Cá
         const fishes = [
-            { id: 1, name: "Cá Koi Nhật", price: 1500000, img: "https://images.unsplash.com/photo-1517361225306-73723bad67d7?w=500" },
-            { id: 2, name: "Cá Rồng Huyết Long", price: 5000000, img: "https://images.unsplash.com/photo-1625244695851-1fc8739942b0?w=500" },
-            { id: 3, name: "Cá Betta Halfmoon", price: 250000, img: "https://images.unsplash.com/photo-1522060290919-28f7a4a19be1?w=500" },
-            { id: 4, name: "Cá Vàng Ranchu", price: 450000, img: "https://images.unsplash.com/photo-1524704659694-9f754a11f9c7?w=500" }
+            { id: 1, name: "Cá Koi Nhật", price: 1500000, img: "https://images.unsplash.com/photo-1517361225306-73723bad67d7?w=400" },
+            { id: 2, name: "Cá Rồng Huyết", price: 5000000, img: "https://images.unsplash.com/photo-1625244695851-1fc8739942b0?w=400" },
+            { id: 3, name: "Cá Betta", price: 200000, img: "https://images.unsplash.com/photo-1522060290919-28f7a4a19be1?w=400" }
         ];
 
-        // 2. Khởi tạo dữ liệu hệ thống
         if (!localStorage.getItem('user_admin')) {
             localStorage.setItem('user_admin', JSON.stringify({ name: 'admin', pass: '123', balance: 0, role: 'admin' }));
         }
+        if (!localStorage.getItem('all_orders')) {
+            localStorage.setItem('all_orders', JSON.stringify([]));
+        }
 
-        // 3. Hàm hiển thị Cá
+        function openModal(id) { document.getElementById(id.replace('modal', 'overlay')).style.display = 'block'; }
+        function closeModals() { 
+            document.getElementById('register-overlay').style.display = 'none';
+            document.getElementById('login-overlay').style.display = 'none';
+        }
+
+        function handleRegister() {
+            const u = document.getElementById('reg-user').value;
+            const p = document.getElementById('reg-pass').value;
+            const c = document.getElementById('reg-confirm').value;
+
+            if(!u || !p) return alert("Không được để trống!");
+            if(p !== c) return alert("Mật khẩu xác nhận không khớp!");
+            if(localStorage.getItem('user_'+u)) return alert("Tên tài khoản đã tồn tại!");
+
+            localStorage.setItem('user_'+u, JSON.stringify({ name: u, pass: p, balance: 0, role: 'user' }));
+            alert("Đăng ký thành công! Hãy đăng nhập.");
+            closeModals();
+        }
+
+        function handleLogin() {
+            const u = document.getElementById('login-user').value;
+            const p = document.getElementById('login-pass').value;
+            const data = localStorage.getItem('user_'+u);
+            if(data && JSON.parse(data).pass === p) {
+                localStorage.setItem('currentUser', u);
+                location.reload();
+            } else { alert("Sai thông tin!"); }
+        }
+
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             fishes.forEach(f => {
                 grid.innerHTML += `
                     <div class="fish-card">
-                        <img src="${f.img}" alt="${f.name}">
+                        <img src="${f.img}">
                         <h3>${f.name}</h3>
-                        <p style="color: #e84118; font-weight: bold; font-size: 1.2rem;">${f.price.toLocaleString()}đ</p>
-                        <button class="btn-buy" onclick="attemptBuy(${f.price}, '${f.name}')">MUA CÁ</button>
-                    </div>
-                `;
+                        <p style="color:red; font-weight:bold">${f.price.toLocaleString()}đ</p>
+                        <button class="btn-buy" onclick="buyFish('${f.name}', ${f.price})">MUA CÁ</button>
+                    </div>`;
             });
         }
 
-        // 4. Quản lý Modal & Đăng nhập
-        function toggleModal(show) { document.getElementById('login-overlay').style.display = show ? 'block' : 'none'; }
+        function buyFish(name, price) {
+            const cur = localStorage.getItem('currentUser');
+            if(!cur) return alert("Vui lòng đăng nhập!");
+            
+            let user = JSON.parse(localStorage.getItem('user_'+cur));
+            if(user.balance < price) return alert("Không đủ tiền!");
 
-        function handleLogin() {
-            const u = document.getElementById('username').value;
-            const p = document.getElementById('password').value;
-            if(!u || !p) return alert("Vui lòng điền đủ thông tin!");
+            user.balance -= price;
+            localStorage.setItem('user_'+cur, JSON.stringify(user));
 
-            let storedUser = localStorage.getItem('user_' + u);
-            if(storedUser) {
-                let user = JSON.parse(storedUser);
-                if(user.pass === p) {
-                    localStorage.setItem('currentUser', u);
-                    location.reload(); // Tự động load lại trang chủ khi thành công
-                } else { alert("Sai mật khẩu!"); }
-            } else {
-                // Đăng ký mới nếu chưa có
-                let newUser = { name: u, pass: p, balance: 0, role: 'user' };
-                localStorage.setItem('user_' + u, JSON.stringify(newUser));
-                localStorage.setItem('currentUser', u);
-                location.reload();
-            }
-        }
+            // Lưu đơn hàng
+            let orders = JSON.parse(localStorage.getItem('all_orders'));
+            orders.push({
+                id: Date.now(),
+                user: cur,
+                product: name,
+                price: price,
+                status: 'Chờ xử lý',
+                time: new Date().toLocaleString()
+            });
+            localStorage.setItem('all_orders', JSON.stringify(orders));
 
-        // 5. Kiểm tra trạng thái khi vào Web
-        function checkLoginStatus() {
-            const current = localStorage.getItem('currentUser');
-            if(current) {
-                const data = JSON.parse(localStorage.getItem('user_' + current));
-                document.getElementById('auth-buttons').style.display = 'none';
-                document.getElementById('user-info-bar').style.display = 'block';
-                document.getElementById('display-name').innerText = current.toUpperCase();
-                document.getElementById('display-balance').innerText = data.balance.toLocaleString();
-                
-                if(data.role === 'admin') document.getElementById('admin-panel').style.display = 'block';
-            }
-        }
-
-        // 6. Logic Mua Cá
-        function attemptBuy(price, name) {
-            const current = localStorage.getItem('currentUser');
-            if(!current) {
-                alert("⚠️ Bạn chưa đăng nhập! Hãy đăng nhập để có thể mua cá.");
-                toggleModal(true);
-                return;
-            }
-
-            let userData = JSON.parse(localStorage.getItem('user_' + current));
-            if(userData.balance < price) {
-                alert("❌ Số dư không đủ! Vui lòng liên hệ Admin để nạp thêm tiền.");
-            } else {
-                userData.balance -= price;
-                localStorage.setItem('user_' + current, JSON.stringify(userData));
-                alert(`✅ Bạn đã mua thành công 1 con ${name}!`);
-                location.reload();
-            }
-        }
-
-        // 7. Chức năng của Admin
-        function adminAction() {
-            const target = document.getElementById('target-user').value;
-            const money = parseInt(document.getElementById('add-amount').value);
-            let data = localStorage.getItem('user_' + target);
-            if(data) {
-                let user = JSON.parse(data);
-                user.balance += money;
-                localStorage.setItem('user_' + target, JSON.stringify(user));
-                alert(`💰 Đã cập nhật số dư cho ${target}. Hiện tại là: ${user.balance.toLocaleString()}đ`);
-                location.reload();
-            } else { alert("Không tìm thấy User!"); }
-        }
-
-        function logout() {
-            localStorage.removeItem('currentUser');
+            alert("Mua thành công! Chờ Admin duyệt đơn.");
             location.reload();
         }
 
-        // Chạy khởi tạo
+        function checkStatus() {
+            const cur = localStorage.getItem('currentUser');
+            if(!cur) return;
+            const user = JSON.parse(localStorage.getItem('user_'+cur));
+            document.getElementById('auth-buttons').style.display = 'none';
+            document.getElementById('user-info-bar').style.display = 'block';
+            document.getElementById('display-name').innerText = cur;
+            document.getElementById('display-balance').innerText = user.balance.toLocaleString();
+            
+            renderUserOrders(cur);
+            if(user.role === 'admin') {
+                document.getElementById('admin-panel').style.display = 'block';
+                renderAdminOrders();
+            }
+        }
+
+        function renderUserOrders(username) {
+            document.getElementById('history-panel').style.display = 'block';
+            const orders = JSON.parse(localStorage.getItem('all_orders'));
+            const myOrders = orders.filter(o => o.user === username);
+            let html = `<table><tr><th>Sản phẩm</th><th>Giá</th><th>Thời gian</th><th>Trạng thái</th></tr>`;
+            myOrders.reverse().forEach(o => {
+                html += `<tr><td>${o.product}</td><td>${o.price.toLocaleString()}</td><td>${o.time}</td>
+                <td><span class="status-badge status-${getStatusClass(o.status)}">${o.status}</span></td></tr>`;
+            });
+            document.getElementById('user-order-list').innerHTML = html + `</table>`;
+        }
+
+        function renderAdminOrders() {
+            const orders = JSON.parse(localStorage.getItem('all_orders'));
+            let html = `<table><tr><th>Khách</th><th>Sản phẩm</th><th>Trạng thái</th><th>Thao tác</th></tr>`;
+            orders.reverse().forEach(o => {
+                html += `<tr><td>${o.user}</td><td>${o.product}</td>
+                <td><b>${o.status}</b></td>
+                <td>
+                    <button onclick="updateStatus(${o.id}, 'Đang chuẩn bị')">Chuẩn bị</button>
+                    <button onclick="updateStatus(${o.id}, 'Đang giao')">Giao</button>
+                    <button onclick="updateStatus(${o.id}, 'Đã giao')">Xong</button>
+                </td></tr>`;
+            });
+            document.getElementById('admin-order-list').innerHTML = html + `</table>`;
+        }
+
+        function updateStatus(orderId, newStatus) {
+            let orders = JSON.parse(localStorage.getItem('all_orders'));
+            const idx = orders.findIndex(o => o.id === orderId);
+            orders[idx].status = newStatus;
+            localStorage.setItem('all_orders', JSON.stringify(orders));
+            location.reload();
+        }
+
+        function adminAddMoney() {
+            const t = document.getElementById('target-user').value;
+            const m = parseInt(document.getElementById('add-amount').value);
+            let data = localStorage.getItem('user_'+t);
+            if(data) {
+                let user = JSON.parse(data);
+                user.balance += m;
+                localStorage.setItem('user_'+t, JSON.stringify(user));
+                alert("Đã cộng tiền!"); location.reload();
+            } else alert("Không thấy user!");
+        }
+
+        function getStatusClass(s) {
+            if(s === 'Đang chuẩn bị') return 'preparing';
+            if(s === 'Đang giao') return 'shipping';
+            if(s === 'Đã giao') return 'done';
+            return '';
+        }
+
+        function logout() { localStorage.removeItem('currentUser'); location.reload(); }
+
         renderProducts();
-        checkLoginStatus();
+        checkStatus();
     </script>
 </body>
 </html>
