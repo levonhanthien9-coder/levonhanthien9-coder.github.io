@@ -2,25 +2,125 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Aqua Store Pro - Quản Lý Kho & Đơn Hàng</title>
+    <title>CÁ CẢNH STORE - Nâng Tầm Không Gian Sống</title>
     <style>
-        :root { --primary: #00a8ff; --dark: #2f3640; --gold: #fbc531; --success: #4cd137; --danger: #e84118; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f5f6fa; margin: 0; padding-bottom: 50px; }
-        nav { background: var(--dark); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .btn-auth { background: var(--primary); border: none; padding: 10px 20px; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; }
+        /* --- CSS GỐC VÀ CÁC THÀNH PHẦN MỚI --- */
+        :root { 
+            --primary: #00a8ff; 
+            --dark: #2f3640; 
+            --gold: #fbc531; 
+            --success: #4cd137; 
+            --danger: #e84118; 
+        }
+
+        html {
+            scroll-behavior: smooth; /* Cuộn trang mượt mà */
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: #f5f6fa; 
+            margin: 0; 
+            padding-bottom: 50px; 
+        }
+
+        /* NAVIGATION */
+        nav { 
+            background: var(--dark); 
+            color: white; 
+            padding: 15px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+
+        .menu {
+            display: flex;
+            gap: 25px;
+        }
+
+        .menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .menu a:hover {
+            color: var(--primary);
+        }
+
+        .btn-auth { 
+            background: var(--primary); 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            color: white; 
+            cursor: pointer; 
+            font-weight: bold; 
+        }
+
+        /* HERO SECTION (SLOGAN) */
+        .hero-section {
+            height: 450px;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=1200');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            color: var(--gold);
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .btn-hero {
+            background: var(--primary);
+            color: white;
+            padding: 15px 45px;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,168,255,0.4);
+        }
+
+        .btn-hero:hover {
+            transform: scale(1.05);
+            background: #008cd4;
+        }
+
+        /* CÁC PHẦN CŨ */
         #user-info-bar { background: #dcdde1; padding: 10px 5%; display: none; text-align: right; border-bottom: 2px solid var(--primary); }
         .section-box { background: white; padding: 20px; margin: 20px 5%; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         #admin-panel { background: #f1c40f; display: none; }
-        #history-panel { display: none; }
+        
         table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background: var(--dark); color: white; }
-        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 20px 5%; }
-        .fish-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; position: relative; }
+        
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 40px 5%; }
+        .fish-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; position: relative; transition: 0.3s; }
+        .fish-card:hover { transform: translateY(-5px); }
         .fish-card img { width: 100%; height: 200px; object-fit: cover; }
+        
         .stock-tag { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; }
-        .btn-buy { background: var(--dark); color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-bottom: 15px; width: 80%; }
-        .btn-buy:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-buy { background: var(--dark); color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-bottom: 15px; width: 80%; font-weight: bold; }
+        
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; }
         .modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; width: 380px; max-height: 90vh; overflow-y: auto; }
         .modal input { width: 100%; padding: 12px; margin: 8px 0; box-sizing: border-box; border: 1px solid #ddd; border-radius: 5px; }
@@ -28,8 +128,16 @@
 </head>
 <body>
 
-    <nav>
-        <div style="font-size: 24px; font-weight: bold;">🐟 AQUA STORE PRO</div>
+    <!-- NAVIGATION -->
+    <nav id="home-top">
+        <div style="font-size: 24px; font-weight: bold;">🐟 CÁ CẢNH STORE</div>
+        
+        <div class="menu">
+            <a href="#home-top">Trang Chủ</a>
+            <a href="#" onclick="alert('Chúng tôi cung cấp các dòng cá cảnh chất lượng nhất!')">Giới Thiệu</a>
+            <a href="#product-grid">Sản Phẩm</a>
+        </div>
+
         <div id="auth-buttons">
             <button class="btn-auth" onclick="openModal('login-overlay')">ĐĂNG NHẬP</button>
             <button class="btn-auth" style="background:#487eb0" onclick="openModal('register-overlay')">ĐĂNG KÝ</button>
@@ -40,6 +148,13 @@
         Chào, <b id="display-name"></b> | Ví: <b id="display-balance" style="color:red">0</b>đ 
         <button onclick="logout()">Thoát</button>
     </div>
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <h1>ĐAM MÊ TRONG TỪNG ÁNH MẮT</h1>
+        <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">Hệ thống cung cấp cá cảnh phong thủy hàng đầu</p>
+        <a href="#product-grid" class="btn-hero">MUA NGAY</a>
+    </section>
 
     <!-- ADMIN PANEL -->
     <div id="admin-panel" class="section-box">
@@ -62,14 +177,16 @@
         <div id="admin-order-list" style="overflow-x: auto;"></div>
     </div>
 
-    <div id="history-panel" class="section-box">
+    <div id="history-panel" class="section-box" style="display: none;">
         <h3>📜 LỊCH SỬ ĐƠN HÀNG</h3>
         <div id="user-order-list" style="overflow-x: auto;"></div>
     </div>
 
-    <div class="container" id="product-grid"></div>
+    <!-- PRODUCT GRID -->
+    <h2 style="text-align: center; margin-top: 50px;" id="product-grid">DANH SÁCH SẢN PHẨM</h2>
+    <div class="container" id="product-list"></div>
 
-    <!-- MODALS -->
+    <!-- MODALS (Giữ nguyên như code cũ) -->
     <div class="overlay" id="register-overlay">
         <div class="modal">
             <h2>ĐĂNG KÝ</h2>
@@ -107,6 +224,7 @@
         </div>
     </div>
 
+    <!-- FIREBASE LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, update, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
@@ -128,20 +246,16 @@
         window.openModal = (id) => { document.getElementById(id).style.display = 'block'; };
         window.closeModals = () => { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); };
 
-        // --- AUTH FUNCTIONS (ĐÃ FIX LỖI) ---
+        // AUTH & LOGIC (GIỮ NGUYÊN)
         window.handleRegister = async () => {
             const u = document.getElementById('reg-user').value.trim();
             const p = document.getElementById('reg-pass').value;
             const c = document.getElementById('reg-confirm').value;
             if(!u || !p) return alert("Vui lòng nhập tên và mật khẩu!");
             if(p !== c) return alert("Mật khẩu không khớp!");
-
             const snapshot = await get(child(ref(db), `users/${u}`));
             if (snapshot.exists()) return alert("Tài khoản đã tồn tại!");
-
-            await set(ref(db, 'users/' + u), {
-                name: u, pass: p, balance: 0, role: u === 'admin' ? 'admin' : 'user'
-            });
+            await set(ref(db, 'users/' + u), { name: u, pass: p, balance: 0, role: u === 'admin' ? 'admin' : 'user' });
             alert("Đăng ký thành công!");
             closeModals();
         };
@@ -160,7 +274,7 @@
 
         window.logout = () => { localStorage.removeItem('currentUser'); location.reload(); };
 
-        // --- KHO HÀNG & MUA HÀNG ---
+        // KHO HÀNG
         async function initStock() {
             const snap = await get(child(ref(db), 'fishes'));
             if (!snap.exists()) {
@@ -192,61 +306,49 @@
             const phone = document.getElementById('order-phone').value.trim();
             const addr = document.getElementById('order-address').value.trim();
             const cur = localStorage.getItem('currentUser');
-
             if(!phone || !addr || qty <= 0) return alert("Vui lòng nhập đủ thông tin!");
-
             const userSnap = await get(child(ref(db), `users/${cur}`));
             const fishSnap = await get(child(ref(db), `fishes/${currentFishSelecting.key}`));
-            
             const user = userSnap.val();
             const fish = fishSnap.val();
             const total = qty * fish.price;
-
             if(fish.stock < qty) return alert("Trong kho chỉ còn " + fish.stock + " con!");
             if(user.balance < total) return alert("Bạn không đủ tiền!");
-
             await update(ref(db, `users/${cur}`), { balance: user.balance - total });
             await update(ref(db, `fishes/${currentFishSelecting.key}`), { stock: fish.stock - qty });
-            
             const id = Date.now();
-            await set(ref(db, 'orders/' + id), {
-                id, user: cur, product: fish.name, qty, price: total, phone, address: addr,
-                status: 'Chờ xử lý', time: new Date().toLocaleString()
-            });
-
+            await set(ref(db, 'orders/' + id), { id, user: cur, product: fish.name, qty, price: total, phone, address: addr, status: 'Chờ xử lý', time: new Date().toLocaleString() });
             alert("Đã đặt hàng!");
             closeModals();
         };
 
-        // --- ADMIN ---
         window.adminAddMoney = async () => {
             const t = document.getElementById('target-user').value.trim();
             const m = parseInt(document.getElementById('add-amount').value);
             const snap = await get(child(ref(db), `users/${t}`));
             if(snap.exists()) {
                 update(ref(db, `users/${t}`), { balance: (snap.val().balance || 0) + m });
-                alert("Đã cộng tiền thành công!");
+                alert("Đã cộng tiền!");
             } else alert("User không tồn tại!");
         };
 
         window.updateStock = () => {
             const key = document.getElementById('select-fish').value;
             const qty = parseInt(document.getElementById('new-stock').value);
-            if(!key || isNaN(qty)) return alert("Nhập số lượng!");
             update(ref(db, `fishes/${key}`), { stock: qty });
-            alert("Đã cập nhật kho!");
+            alert("Đã cập nhật!");
         };
 
         window.updateStatus = (id, st) => { update(ref(db, `orders/${id}`), { status: st }); };
 
-        // --- INIT ---
+        // INIT UI
         function initApp() {
             initStock();
             const cur = localStorage.getItem('currentUser');
 
             onValue(ref(db, 'fishes'), (snap) => {
                 const data = snap.val();
-                const grid = document.getElementById('product-grid');
+                const grid = document.getElementById('product-list');
                 const sel = document.getElementById('select-fish');
                 grid.innerHTML = ''; sel.innerHTML = '';
                 for(let k in data) {
@@ -278,8 +380,6 @@
             onValue(ref(db, 'orders'), (snap) => {
                 const data = snap.val() || {};
                 const orders = Object.values(data).reverse();
-                
-                // Render User
                 let uH = `<table><tr><th>Cá</th><th>SL</th><th>Tổng</th><th>Trạng thái</th></tr>`;
                 orders.filter(o => o.user === cur).forEach(o => {
                     uH += `<tr><td>${o.product}</td><td>${o.qty}</td><td>${o.price.toLocaleString()}</td><td>${o.status}</td></tr>`;
@@ -287,7 +387,6 @@
                 document.getElementById('user-order-list').innerHTML = uH + `</table>`;
                 document.getElementById('history-panel').style.display = 'block';
 
-                // Render Admin
                 let aH = `<table><tr><th>Khách</th><th>Thông tin</th><th>Đơn</th><th>Thao tác</th></tr>`;
                 orders.forEach(o => {
                     aH += `<tr><td>${o.user}</td><td style="font-size:11px">${o.phone}<br>${o.address}</td><td>${o.product} x${o.qty}</td>
@@ -296,7 +395,6 @@
                 document.getElementById('admin-order-list').innerHTML = aH + `</table>`;
             });
         }
-
         initApp();
     </script>
 </body>
