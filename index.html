@@ -31,11 +31,32 @@
 
         /* HERO SECTION */
         .hero-section {
-            height: 400px;
+            height: 450px;
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
                         url('https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=1200');
             background-size: cover; background-position: center;
             display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;
+        }
+
+        /* NÚT MUA NGAY TRÊN BANNER */
+        .btn-hero-buy {
+            margin-top: 25px;
+            padding: 15px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+        }
+        .btn-hero-buy:hover {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.6);
+            transform: scale(1.05);
         }
 
         /* SECTION BOX */
@@ -90,13 +111,22 @@
         </div>
     </nav>
 
-    <!-- TRANG CHỦ (Bao gồm Hero và Sản phẩm) -->
+    <!-- TRANG CHỦ -->
     <div id="main-content">
         <!-- HERO -->
         <section class="hero-section">
-            <h1 style="font-size: 3rem; margin: 0;">ĐỈNH NÓC KỊCH TRẦN</h1>
-            <p>Nâng tầm không gian sống với những chú cá rực rỡ nhất</p>
+            <h1 style="font-size: 3.5rem; margin: 0; text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">ĐỈNH NÓC KỊCH TRẦN</h1>
+            <p style="font-size: 1.2rem;">Nâng tầm không gian sống với những chú cá rực rỡ nhất</p>
+            <!-- NÚT MUA NGAY MỚI THÊM -->
+            <a href="#product-grid" class="btn-hero-buy">MUA NGAY BÂY GIỜ</a>
         </section>
+
+        <!-- PHẦN GIỚI THIỆU KHÔI PHỤC LẠI -->
+        <div class="section-box">
+            <h2 class="section-title">GIỚI THIỆU CỬA HÀNG</h2>
+            <p>Chào mừng bạn đến với <b>Cửa Hàng Cá Cảnh Thiên</b>. Chúng tôi chuyên cung cấp các dòng cá cảnh nhập khẩu cao cấp với chất lượng tốt nhất và giá cả phải chăng.</p>
+            <p>Với niềm đam mê và kinh nghiệm lâu năm, chúng tôi cam kết mang đến cho khách hàng những trải nghiệm tuyệt vời nhất khi mua sắm tại cửa hàng.</p>
+        </div>
 
         <!-- ADMIN PANEL -->
         <div id="admin-panel" class="section-box" style="display:none; border: 2px solid var(--gold);">
@@ -111,14 +141,12 @@
         </div>
     </div>
 
-    <!-- TRANG LỊCH SỬ (Mặc định ẩn) -->
+    <!-- TRANG LỊCH SỬ -->
     <div id="history-page" style="display: none; min-height: 60vh;">
         <div class="section-box">
             <h2 class="section-title">📜 LỊCH SỬ GIAO DỊCH CỦA BẠN</h2>
             <p style="font-size: 13px; color: #888;">Toàn bộ danh sách đơn hàng đã đặt sẽ hiển thị tại đây.</p>
-            <div id="user-order-list" style="overflow-x: auto;">
-                <!-- Bảng lịch sử sẽ hiện ở đây -->
-            </div>
+            <div id="user-order-list" style="overflow-x: auto;"></div>
             <button onclick="showMainPage()" style="margin-top: 20px; padding: 10px 20px; cursor: pointer; border-radius: 5px; border: 1px solid #ccc; background: #fff;">← Quay về mua cá</button>
         </div>
     </div>
@@ -142,9 +170,8 @@
         </div>
     </footer>
 
-    <!-- MODALS -->
+    <!-- MODALS (LOGIN & BUY) -->
     <div class="overlay" id="login-overlay"><div class="modal"><h2>ĐĂNG NHẬP</h2><input type="text" id="login-user" placeholder="Tên tài khoản"><input type="password" id="login-pass" placeholder="Mật khẩu"><button onclick="handleLogin()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:5px; cursor:pointer;">VÀO CỬA HÀNG</button><button onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; margin-top:10px; cursor:pointer;">Đóng</button></div></div>
-    
     <div class="overlay" id="buy-overlay"><div class="modal"><h3 id="buy-title"></h3><p id="buy-price-info"></p><label>Số lượng:</label><input type="number" id="order-qty" value="1" min="1" oninput="calculateTotal()"><div style="background:#f9f9f9; padding:10px; margin:10px 0; border-radius:5px;">Thành tiền: <b id="buy-total" style="color:var(--danger)">0đ</b></div><button onclick="confirmPurchase()" style="width:100%; padding:12px; background:var(--success); color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">XÁC NHẬN ĐẶT HÀNG</button><button onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; margin-top:10px; cursor:pointer;">Hủy</button></div></div>
 
     <script type="module">
@@ -164,16 +191,14 @@
         const db = getDatabase(app);
         let currentFish = null;
 
-        // --- HÀM CHUYỂN ĐỔI TRANG ---
+        // CHUYỂN TRANG
         window.showMainPage = () => {
             document.getElementById('main-content').style.display = 'block';
             document.getElementById('history-page').style.display = 'none';
-            window.scrollTo(0,0);
         };
         window.showHistoryPage = () => {
             document.getElementById('main-content').style.display = 'none';
             document.getElementById('history-page').style.display = 'block';
-            window.scrollTo(0,0);
         };
 
         window.openModal = (id) => { document.getElementById(id).style.display = 'block'; };
@@ -223,7 +248,6 @@
             closeModals();
         };
 
-        // Khởi tạo ứng dụng
         const cur = localStorage.getItem('currentUser');
         onValue(ref(db, 'fishes'), (snap) => {
             const grid = document.getElementById('product-list');
@@ -244,16 +268,13 @@
             document.getElementById('auth-buttons').style.display = 'none';
             document.getElementById('user-info-bar').style.display = 'block';
             document.getElementById('display-name').innerText = cur;
-            
             onValue(ref(db, `users/${cur}`), snap => {
-                document.getElementById('display-balance').innerText = snap.val().balance.toLocaleString();
+                document.getElementById('display-balance').innerText = (snap.val().balance || 0).toLocaleString();
                 if(snap.val().role === 'admin') document.getElementById('admin-panel').style.display = 'block';
             });
-
             onValue(ref(db, 'orders'), snap => {
                 const orders = Object.values(snap.val() || {}).reverse();
-                // Lịch sử người dùng
-                let h = `<table class="history-table"><tr><th>Thời gian</th><th>Sản phẩm</th><th>SL</th><th>Tổng tiền</th><th>Trạng thái</th></tr>`;
+                let h = `<table class="history-table"><tr><th>Thời gian</th><th>Sản phẩm</th><th>SL</th><th>Tổng</th><th>Trạng thái</th></tr>`;
                 orders.filter(o => o.user === cur).forEach(o => {
                     const stClass = o.status === 'Chờ xử lý' ? 'status-pending' : (o.status === 'Đang giao' ? 'status-shipping' : 'status-done');
                     h += `<tr><td>${o.time}</td><td><b>${o.product}</b></td><td>${o.qty}</td><td>${o.price.toLocaleString()}đ</td>
