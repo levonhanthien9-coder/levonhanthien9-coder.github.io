@@ -4,123 +4,68 @@
     <meta charset="UTF-8">
     <title>CÁ CẢNH STORE - Nâng Tầm Không Gian Sống</title>
     <style>
-        /* --- CSS GỐC VÀ CÁC THÀNH PHẦN MỚI --- */
         :root { 
             --primary: #00a8ff; 
             --dark: #2f3640; 
             --gold: #fbc531; 
             --success: #4cd137; 
             --danger: #e84118; 
+            --light: #f5f6fa;
         }
 
-        html {
-            scroll-behavior: smooth; /* Cuộn trang mượt mà */
-        }
-
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: #f5f6fa; 
-            margin: 0; 
-            padding-bottom: 50px; 
-        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; }
 
         /* NAVIGATION */
         nav { 
-            background: var(--dark); 
-            color: white; 
-            padding: 15px 5%; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
+            background: var(--dark); color: white; padding: 15px 5%; 
+            display: flex; justify-content: space-between; align-items: center; 
+            position: sticky; top: 0; z-index: 1000; 
         }
+        .menu { display: flex; gap: 25px; }
+        .menu a { color: white; text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .menu a:hover { color: var(--primary); }
+        .btn-auth { background: var(--primary); border: none; padding: 10px 20px; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; }
 
-        .menu {
-            display: flex;
-            gap: 25px;
-        }
-
-        .menu a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: 0.3s;
-        }
-
-        .menu a:hover {
-            color: var(--primary);
-        }
-
-        .btn-auth { 
-            background: var(--primary); 
-            border: none; 
-            padding: 10px 20px; 
-            border-radius: 5px; 
-            color: white; 
-            cursor: pointer; 
-            font-weight: bold; 
-        }
-
-        /* HERO SECTION (SLOGAN) */
+        /* HERO SECTION */
         .hero-section {
             height: 450px;
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
                         url('https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=1200');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;
         }
+        .hero-section h1 { font-size: 3.5rem; margin-bottom: 10px; color: var(--gold); text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .btn-hero { background: var(--primary); color: white; padding: 15px 45px; border: none; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; text-decoration: none; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,168,255,0.4); }
+        .btn-hero:hover { transform: scale(1.05); background: #008cd4; }
 
-        .hero-section h1 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            color: var(--gold);
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-        }
+        /* ABOUT SECTION */
+        .about-section { padding: 60px 10%; background: white; text-align: center; }
+        .about-container { display: flex; align-items: center; gap: 40px; flex-wrap: wrap; text-align: left; }
+        .about-text { flex: 1; min-width: 300px; }
+        .about-image { flex: 1; min-width: 300px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .about-image img { width: 100%; display: block; }
 
-        .btn-hero {
-            background: var(--primary);
-            color: white;
-            padding: 15px 45px;
-            border: none;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0,168,255,0.4);
-        }
+        /* FOOTER */
+        footer { background: var(--dark); color: white; padding: 50px 5% 20px; margin-top: 50px; }
+        .footer-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .footer-info h3 { color: var(--primary); margin-bottom: 20px; }
+        .footer-info p { margin: 10px 0; line-height: 1.6; opacity: 0.8; }
+        .map-container { border-radius: 10px; overflow: hidden; height: 250px; border: 2px solid #444; }
 
-        .btn-hero:hover {
-            transform: scale(1.05);
-            background: #008cd4;
-        }
-
-        /* CÁC PHẦN CŨ */
+        /* CŨ & TIỆN ÍCH */
         #user-info-bar { background: #dcdde1; padding: 10px 5%; display: none; text-align: right; border-bottom: 2px solid var(--primary); }
         .section-box { background: white; padding: 20px; margin: 20px 5%; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         #admin-panel { background: #f1c40f; display: none; }
-        
         table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background: var(--dark); color: white; }
-        
         .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 40px 5%; }
         .fish-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; position: relative; transition: 0.3s; }
         .fish-card:hover { transform: translateY(-5px); }
         .fish-card img { width: 100%; height: 200px; object-fit: cover; }
-        
         .stock-tag { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; }
         .btn-buy { background: var(--dark); color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-bottom: 15px; width: 80%; font-weight: bold; }
-        
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; }
         .modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; width: 380px; max-height: 90vh; overflow-y: auto; }
         .modal input { width: 100%; padding: 12px; margin: 8px 0; box-sizing: border-box; border: 1px solid #ddd; border-radius: 5px; }
@@ -131,13 +76,12 @@
     <!-- NAVIGATION -->
     <nav id="home-top">
         <div style="font-size: 24px; font-weight: bold;">🐟 CÁ CẢNH STORE</div>
-        
         <div class="menu">
             <a href="#home-top">Trang Chủ</a>
-            <a href="#" onclick="alert('Chúng tôi cung cấp các dòng cá cảnh chất lượng nhất!')">Giới Thiệu</a>
+            <a href="#about-us">Giới Thiệu</a>
             <a href="#product-grid">Sản Phẩm</a>
+            <a href="#contact-footer">Liên Hệ</a>
         </div>
-
         <div id="auth-buttons">
             <button class="btn-auth" onclick="openModal('login-overlay')">ĐĂNG NHẬP</button>
             <button class="btn-auth" style="background:#487eb0" onclick="openModal('register-overlay')">ĐĂNG KÝ</button>
@@ -152,11 +96,31 @@
     <!-- HERO SECTION -->
     <section class="hero-section">
         <h1>ĐAM MÊ TRONG TỪNG ÁNH MẮT</h1>
-        <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">Hệ thống cung cấp cá cảnh phong thủy hàng đầu</p>
+        <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">Hệ thống cung cấp cá cảnh phong thủy hàng đầu Hóc Môn</p>
         <a href="#product-grid" class="btn-hero">MUA NGAY</a>
     </section>
 
-    <!-- ADMIN PANEL -->
+    <!-- ABOUT SECTION -->
+    <section class="about-section" id="about-us">
+        <h2 style="color: var(--dark); font-size: 2rem; margin-bottom: 40px;">GIỚI THIỆU VỀ CHÚNG TÔI</h2>
+        <div class="about-container">
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600" alt="Cửa hàng cá cảnh">
+            </div>
+            <div class="about-text">
+                <h3>Cá Cảnh Store - Uy Tín & Chất Lượng</h3>
+                <p>Chào mừng bạn đến với <b>Cá Cảnh Store</b>! Chúng tôi tự hào là đơn vị chuyên cung cấp các dòng cá cảnh từ bình dân đến cao cấp như Cá Koi, Cá Rồng, Cá Betta...</p>
+                <p>Với hơn 10 năm kinh nghiệm, chúng tôi không chỉ bán cá mà còn mang đến giải pháp chăm sóc, thiết kế hồ cá phong thủy giúp không gian sống của bạn thêm sinh động và thư giãn.</p>
+                <ul style="color: #555; line-height: 2;">
+                    <li>✅ Cá khỏe mạnh, đã qua kiểm dịch.</li>
+                    <li>✅ Tư vấn kỹ thuật nuôi miễn phí trọn đời.</li>
+                    <li>✅ Giao hàng tận nơi nhanh chóng, an toàn.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ADMIN & HISTORY (Hidden by default) -->
     <div id="admin-panel" class="section-box">
         <h3>🛠 QUẢN TRỊ VIÊN</h3>
         <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
@@ -183,48 +147,40 @@
     </div>
 
     <!-- PRODUCT GRID -->
-    <h2 style="text-align: center; margin-top: 50px;" id="product-grid">DANH SÁCH SẢN PHẨM</h2>
+    <h2 style="text-align: center; margin-top: 50px; font-size: 2rem;" id="product-grid">DANH SÁCH SẢN PHẨM</h2>
     <div class="container" id="product-list"></div>
 
-    <!-- MODALS (Giữ nguyên như code cũ) -->
-    <div class="overlay" id="register-overlay">
-        <div class="modal">
-            <h2>ĐĂNG KÝ</h2>
-            <input type="text" id="reg-user" placeholder="Tên tài khoản">
-            <input type="password" id="reg-pass" placeholder="Mật khẩu">
-            <input type="password" id="reg-confirm" placeholder="Xác nhận mật khẩu">
-            <button onclick="handleRegister()" style="width:100%; padding:10px; background:var(--success); color:white; border:none; cursor:pointer;">TẠO TÀI KHOẢN</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:gray; width:100%; margin-top:10px; cursor:pointer;">Hủy</button>
-        </div>
-    </div>
-
-    <div class="overlay" id="login-overlay">
-        <div class="modal">
-            <h2>ĐĂNG NHẬP</h2>
-            <input type="text" id="login-user" placeholder="Tên tài khoản">
-            <input type="password" id="login-pass" placeholder="Mật khẩu">
-            <button onclick="handleLogin()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; cursor:pointer;">VÀO CỬA HÀNG</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:gray; width:100%; margin-top:10px; cursor:pointer;">Hủy</button>
-        </div>
-    </div>
-
-    <div class="overlay" id="buy-overlay">
-        <div class="modal">
-            <h2 id="buy-title">XÁC NHẬN MUA</h2>
-            <p id="buy-price-info"></p>
-            <label>Số lượng:</label>
-            <input type="number" id="order-qty" value="1" min="1" oninput="calculateTotal()">
-            <input type="text" id="order-phone" placeholder="Số điện thoại">
-            <input type="text" id="order-address" placeholder="Địa chỉ nhận hàng">
-            <div style="background: #eee; padding: 10px; border-radius: 5px; margin: 10px 0;">
-                Tổng: <b id="buy-total" style="color:red">0đ</b>
+    <!-- FOOTER & CONTACT -->
+    <footer id="contact-footer">
+        <div class="footer-container">
+            <div class="footer-info">
+                <h3>THÔNG TIN LIÊN HỆ</h3>
+                <p>📍 <b>Địa chỉ:</b> 110/1C ấp Tam Đông, Xã Thới Tam Thôn, Hóc Môn, TP.HCM</p>
+                <p>📞 <b>Số điện thoại:</b> 094199942</p>
+                <p>💬 <b>Zalo:</b> 0941999542</p>
+                <p>📧 <b>Gmail:</b> levonhanthien@gmail.com</p>
+                <p>⏰ <b>Giờ mở cửa:</b> 08:00 - 21:00 (Tất cả các ngày)</p>
             </div>
-            <button onclick="confirmPurchase()" style="width:100%; padding:15px; background:var(--success); color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">ĐẶT HÀNG NGAY</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:gray; width:100%; margin-top:10px; cursor:pointer;">Hủy</button>
+            <div class="footer-info">
+                <h3>VỊ TRÍ BẢN ĐỒ</h3>
+                <div class="map-container">
+                    <!-- Google Map Embed -->
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.253683677271!2d106.608381!3d10.868272!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDUyJzA1LjgiTiAxMDbCsDM2JzMwLjIiRQ!5e0!3m2!1svi!2s!4v1700000000000!5m2!1svi!2s" 
+                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
         </div>
-    </div>
+        <hr style="opacity: 0.1; margin: 30px 0;">
+        <p style="text-align: center; opacity: 0.5; font-size: 14px;">© 2024 Cá Cảnh Store. Thiết kế bởi Thiên.</p>
+    </footer>
 
-    <!-- FIREBASE LOGIC -->
+    <!-- MODALS & FIREBASE (Giữ nguyên logic cũ của bạn) -->
+    <div class="overlay" id="register-overlay"><div class="modal"><h2>ĐĂNG KÝ</h2><input type="text" id="reg-user" placeholder="Tên tài khoản"><input type="password" id="reg-pass" placeholder="Mật khẩu"><input type="password" id="reg-confirm" placeholder="Xác nhận mật khẩu"><button onclick="handleRegister()" style="width:100%; padding:10px; background:var(--success); color:white; border:none; cursor:pointer;">TẠO TÀI KHOẢN</button><button onclick="closeModals()" style="background:none; border:none; color:gray; width:100%; margin-top:10px; cursor:pointer;">Hủy</button></div></div>
+    <div class="overlay" id="login-overlay"><div class="modal"><h2>ĐĂNG NHẬP</h2><input type="text" id="login-user" placeholder="Tên tài khoản"><input type="password" id="login-pass" placeholder="Mật khẩu"><button onclick="handleLogin()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; cursor:pointer;">VÀO CỬA HÀNG</button><button onclick="closeModals()" style="background:none; border:none; color:gray; width:100%; margin-top:10px; cursor:pointer;">Hủy</button></div></div>
+    <div class="overlay" id="buy-overlay"><div class="modal"><h2 id="buy-title">XÁC NHẬN MUA</h2><p id="buy-price-info"></p><label>Số lượng:</label><input type="number" id="order-qty" value="1" min="1" oninput="calculateTotal()"><input type="text" id="order-phone" placeholder="Số điện thoại"><input type="text" id="order-address" placeholder="Địa chỉ nhận hàng"><div style="background: #eee; padding: 10px; border-radius: 5px; margin: 10px 0;">Tổng: <b id="buy-total" style="color:red">0đ</b></div><button onclick="confirmPurchase()" style="width:100%; padding:15px; background:var(--success); color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">ĐẶT HÀNG NGAY</button><button onclick="closeModals()" style="background:none; border:none; color:gray; width:100%; margin-top:10px; cursor:pointer;">Hủy</button></div></div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, update, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
@@ -246,7 +202,6 @@
         window.openModal = (id) => { document.getElementById(id).style.display = 'block'; };
         window.closeModals = () => { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); };
 
-        // AUTH & LOGIC (GIỮ NGUYÊN)
         window.handleRegister = async () => {
             const u = document.getElementById('reg-user').value.trim();
             const p = document.getElementById('reg-pass').value;
@@ -274,7 +229,6 @@
 
         window.logout = () => { localStorage.removeItem('currentUser'); location.reload(); };
 
-        // KHO HÀNG
         async function initStock() {
             const snap = await get(child(ref(db), 'fishes'));
             if (!snap.exists()) {
@@ -341,11 +295,9 @@
 
         window.updateStatus = (id, st) => { update(ref(db, `orders/${id}`), { status: st }); };
 
-        // INIT UI
         function initApp() {
             initStock();
             const cur = localStorage.getItem('currentUser');
-
             onValue(ref(db, 'fishes'), (snap) => {
                 const data = snap.val();
                 const grid = document.getElementById('product-list');
@@ -364,9 +316,7 @@
                     sel.innerHTML += `<option value="${k}">${f.name}</option>`;
                 }
             });
-
             if(!cur) return;
-
             onValue(ref(db, `users/${cur}`), (snap) => {
                 const u = snap.val();
                 if(!u) return;
@@ -376,7 +326,6 @@
                 document.getElementById('display-balance').innerText = (u.balance || 0).toLocaleString();
                 if(u.role === 'admin') document.getElementById('admin-panel').style.display = 'block';
             });
-
             onValue(ref(db, 'orders'), (snap) => {
                 const data = snap.val() || {};
                 const orders = Object.values(data).reverse();
@@ -386,7 +335,6 @@
                 });
                 document.getElementById('user-order-list').innerHTML = uH + `</table>`;
                 document.getElementById('history-panel').style.display = 'block';
-
                 let aH = `<table><tr><th>Khách</th><th>Thông tin</th><th>Đơn</th><th>Thao tác</th></tr>`;
                 orders.forEach(o => {
                     aH += `<tr><td>${o.user}</td><td style="font-size:11px">${o.phone}<br>${o.address}</td><td>${o.product} x${o.qty}</td>
