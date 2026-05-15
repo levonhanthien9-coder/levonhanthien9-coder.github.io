@@ -2,91 +2,154 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>CÁ CẢNH STORE - Quản Lý Đơn Hàng</title>
+    <title>CÁ CẢNH STORE - Đỉnh Nóc Kịch Trần</title>
     <style>
         :root { 
-            --primary: #00a8ff; --dark: #2f3640; --gold: #fbc531; 
-            --success: #4cd137; --danger: #e84118; --light: #f5f6fa;
+            --primary: #00a8ff; 
+            --dark: #2f3640; 
+            --gold: #fbc531; 
+            --success: #4cd137; 
+            --danger: #e84118; 
+            --light: #f5f6fa;
+            --white: #ffffff;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; }
-        
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light); margin: 0; color: #333; }
+
         /* NAVIGATION */
         nav { 
             background: var(--dark); color: white; padding: 15px 5%; 
             display: flex; justify-content: space-between; align-items: center; 
-            position: sticky; top: 0; z-index: 1000;
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
+        .logo { font-size: 24px; font-weight: bold; letter-spacing: 1px; color: var(--gold); cursor: pointer; }
         .menu { display: flex; gap: 20px; }
-        .menu a { color: white; text-decoration: none; font-weight: 500; cursor: pointer; }
+        .menu a { color: white; text-decoration: none; font-weight: 500; transition: 0.3s; font-size: 15px; cursor: pointer; }
         .menu a:hover { color: var(--primary); }
+        .btn-auth { background: var(--primary); border: none; padding: 8px 18px; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; margin-left: 5px; }
 
-        /* TRẠNG THÁI NỘI DUNG */
-        .page-content { display: block; } /* Phần mặc định hiện */
-        .history-page { display: none; padding: 40px 5%; min-height: 80vh; } /* Phần lịch sử mặc định ẩn */
+        /* HERO SECTION */
+        .hero-section {
+            height: 400px;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=1200');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;
+        }
 
-        /* BẢNG LỊCH SỬ */
-        .section-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { background: #f8f9fa; padding: 15px; text-align: left; border-bottom: 2px solid #eee; color: #666; }
-        td { padding: 15px; border-bottom: 1px solid #eee; }
-        
-        .status-pill { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .pending { background: #fff3cd; color: #856404; }
-        .done { background: #d4edda; color: #155724; }
+        /* SECTION BOX */
+        .section-box { background: var(--white); padding: 30px; margin: 30px 5%; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .section-title { border-left: 5px solid var(--primary); padding-left: 15px; margin-bottom: 25px; color: var(--dark); }
 
-        /* CÁC THÀNH PHẦN KHÁC */
-        .hero-section { height: 300px; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1522060290919-28f7a4a19be1?w=1200'); background-size: cover; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; }
-        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px 5%; }
-        .fish-card { background: white; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .fish-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 5px; }
-        .btn-buy { background: var(--primary); color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        /* HISTORY TABLE DESIGN */
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        .history-table th { background: #f8f9fa; color: #666; text-align: left; padding: 15px; border-bottom: 2px solid #eee; }
+        .history-table td { padding: 15px; border-bottom: 1px solid #eee; }
+        .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-shipping { background: #cce5ff; color: #004085; }
+        .status-done { background: #d4edda; color: #155724; }
+
+        /* PRODUCT GRID */
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; padding: 20px 5%; }
+        .fish-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; transition: 0.3s; position: relative; }
+        .fish-card:hover { transform: translateY(-8px); }
+        .fish-card img { width: 100%; height: 180px; object-fit: cover; }
+        .price { color: var(--danger); font-size: 1.2rem; font-weight: bold; margin: 10px 0; }
+
+        /* FOOTER */
+        footer { background: var(--dark); color: white; padding: 50px 5% 20px; margin-top: 50px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
+        .map-frame { border-radius: 10px; overflow: hidden; height: 200px; margin-top: 15px; }
+
+        /* MODALS */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; backdrop-filter: blur(3px); }
+        .modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; width: 350px; }
+        .modal input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-    <!-- THANH MENU (Luôn luôn hiện) -->
+    <!-- NAVIGATION -->
     <nav>
-        <div style="font-size: 22px; font-weight: bold; color: var(--gold);">🐟 CÁ CẢNH STORE</div>
+        <div class="logo" onclick="showMainPage()">🐟 CÁ CẢNH STORE</div>
         <div class="menu">
-            <a onclick="showPage('home')">Trang Chủ</a>
-            <a onclick="showPage('history')" id="menu-history" style="display: none;">Lịch Sử Mua Hàng</a>
+            <a onclick="showMainPage()">Trang Chủ</a>
+            <a href="#product-grid" id="menu-shop">Cửa Hàng</a>
+            <a onclick="showHistoryPage()" id="menu-history" style="display: none;">Lịch Sử Mua Hàng</a>
+            <a href="#contact-info">Liên Hệ</a>
         </div>
-        <div id="user-info" style="display: none;">
-            <span id="display-name"></span> | Ví: <b id="display-balance" style="color:var(--success)">0</b>đ
-            <button onclick="logout()" style="background:none; border:1px solid #666; color:white; padding:4px 8px; cursor:pointer; margin-left:10px;">Thoát</button>
+        <div id="auth-buttons">
+            <button class="btn-auth" onclick="openModal('login-overlay')">Đăng Nhập</button>
         </div>
-        <button id="btn-login-main" onclick="alert('Vui lòng dùng tài khoản của bạn!')" style="background:var(--primary); border:none; color:white; padding:8px 15px; border-radius:5px; cursor:pointer;">ĐĂNG NHẬP</button>
+        <div id="user-info-bar" style="display: none; color: white; font-size: 14px;">
+            <span id="display-name" style="color: var(--gold); font-weight: bold;"></span> | 
+            Ví: <span id="display-balance" style="color: #4cd137;">0</span>đ 
+            <button onclick="logout()" style="margin-left:10px; background:none; border:1px solid #666; color:white; cursor:pointer; padding:3px 8px; border-radius:3px;">Thoát</button>
+        </div>
     </nav>
 
-    <!-- PHẦN TRANG CHỦ (Sẽ bị ẩn khi bấm vào Lịch sử) -->
-    <div id="home-page" class="page-content">
+    <!-- TRANG CHỦ (Bao gồm Hero và Sản phẩm) -->
+    <div id="main-content">
+        <!-- HERO -->
         <section class="hero-section">
-            <h1>ĐỈNH NÓC KỊCH TRẦN</h1>
-            <p>Chào mừng bạn đến với cửa hàng cá cảnh của Thiên</p>
+            <h1 style="font-size: 3rem; margin: 0;">ĐỈNH NÓC KỊCH TRẦN</h1>
+            <p>Nâng tầm không gian sống với những chú cá rực rỡ nhất</p>
         </section>
-        
-        <h2 style="text-align:center; margin-top:30px;">SẢN PHẨM MỚI NHẤT</h2>
-        <div class="container" id="product-list">
-            <!-- Cá sẽ hiện ở đây -->
+
+        <!-- ADMIN PANEL -->
+        <div id="admin-panel" class="section-box" style="display:none; border: 2px solid var(--gold);">
+            <h2 class="section-title">🛠 QUẢN TRỊ HỆ THỐNG</h2>
+            <div id="admin-order-list"></div>
+        </div>
+
+        <!-- PRODUCT SECTION -->
+        <div id="product-grid">
+            <h2 style="text-align: center; margin-top: 40px;">SẢN PHẨM NỔI BẬT</h2>
+            <div class="container" id="product-list"></div>
         </div>
     </div>
 
-    <!-- PHẦN LỊCH SỬ (Chỉ hiện khi bấm vào Lịch sử) -->
-    <div id="history-page" class="history-page">
+    <!-- TRANG LỊCH SỬ (Mặc định ẩn) -->
+    <div id="history-page" style="display: none; min-height: 60vh;">
         <div class="section-box">
-            <h2 style="margin-top:0; color: var(--dark);">📜 LỊCH SỬ ĐƠN HÀNG</h2>
-            <p>Dưới đây là danh sách các loại cá bạn đã đặt mua:</p>
-            <div id="user-order-list">
-                <!-- Bảng đơn hàng hiện ở đây -->
+            <h2 class="section-title">📜 LỊCH SỬ GIAO DỊCH CỦA BẠN</h2>
+            <p style="font-size: 13px; color: #888;">Toàn bộ danh sách đơn hàng đã đặt sẽ hiển thị tại đây.</p>
+            <div id="user-order-list" style="overflow-x: auto;">
+                <!-- Bảng lịch sử sẽ hiện ở đây -->
             </div>
-            <button onclick="showPage('home')" style="margin-top:20px; padding:10px 20px; cursor:pointer;">← Quay lại mua sắm</button>
+            <button onclick="showMainPage()" style="margin-top: 20px; padding: 10px 20px; cursor: pointer; border-radius: 5px; border: 1px solid #ccc; background: #fff;">← Quay về mua cá</button>
         </div>
     </div>
+
+    <!-- FOOTER -->
+    <footer id="contact-info">
+        <div class="footer-grid">
+            <div>
+                <h3 style="color: var(--primary);">LIÊN HỆ</h3>
+                <p>📍 110/1C ấp Tam Đông, Thới Tam Thôn, Hóc Môn</p>
+                <p>📞 SĐT: 094199942</p>
+                <p>💬 Zalo: 0941999542</p>
+                <p>📧 Email: levonhanthien@gmail.com</p>
+            </div>
+            <div>
+                <h3 style="color: var(--primary);">VỊ TRÍ</h3>
+                <div class="map-frame">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.253683677271!2d106.608381!3d10.868272!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDUyJzA1LjgiTiAxMDbCsDM2JzMwLjIiRQ!5e0!3m2!1svi!2s!4v1700000000000!5m2!1svi!2s" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <div class="overlay" id="login-overlay"><div class="modal"><h2>ĐĂNG NHẬP</h2><input type="text" id="login-user" placeholder="Tên tài khoản"><input type="password" id="login-pass" placeholder="Mật khẩu"><button onclick="handleLogin()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:5px; cursor:pointer;">VÀO CỬA HÀNG</button><button onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; margin-top:10px; cursor:pointer;">Đóng</button></div></div>
+    
+    <div class="overlay" id="buy-overlay"><div class="modal"><h3 id="buy-title"></h3><p id="buy-price-info"></p><label>Số lượng:</label><input type="number" id="order-qty" value="1" min="1" oninput="calculateTotal()"><div style="background:#f9f9f9; padding:10px; margin:10px 0; border-radius:5px;">Thành tiền: <b id="buy-total" style="color:var(--danger)">0đ</b></div><button onclick="confirmPurchase()" style="width:100%; padding:12px; background:var(--success); color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">XÁC NHẬN ĐẶT HÀNG</button><button onclick="closeModals()" style="width:100%; background:none; border:none; color:gray; margin-top:10px; cursor:pointer;">Hủy</button></div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, update, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA8Afsg5lU6hBZbhEFvjzSdS4mnoWfO-k4",
@@ -99,62 +162,104 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const cur = localStorage.getItem('currentUser');
+        let currentFish = null;
 
-        // HÀM CHUYỂN TRANG QUAN TRỌNG
-        window.showPage = (pageName) => {
-            if(pageName === 'home') {
-                document.getElementById('home-page').style.display = 'block';
-                document.getElementById('history-page').style.display = 'none';
-            } else {
-                document.getElementById('home-page').style.display = 'none';
-                document.getElementById('history-page').style.display = 'block';
-            }
+        // --- HÀM CHUYỂN ĐỔI TRANG ---
+        window.showMainPage = () => {
+            document.getElementById('main-content').style.display = 'block';
+            document.getElementById('history-page').style.display = 'none';
+            window.scrollTo(0,0);
+        };
+        window.showHistoryPage = () => {
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('history-page').style.display = 'block';
+            window.scrollTo(0,0);
+        };
+
+        window.openModal = (id) => { document.getElementById(id).style.display = 'block'; };
+        window.closeModals = () => { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); };
+
+        window.handleLogin = async () => {
+            const u = document.getElementById('login-user').value.trim();
+            const p = document.getElementById('login-pass').value;
+            const snap = await get(child(ref(db), `users/${u}`));
+            if (snap.exists() && snap.val().pass === p) {
+                localStorage.setItem('currentUser', u);
+                location.reload();
+            } else alert("Thông tin đăng nhập không đúng!");
         };
 
         window.logout = () => { localStorage.removeItem('currentUser'); location.reload(); };
 
-        // Lấy dữ liệu cá
+        window.buyFishTrigger = (key, name, price) => {
+            if(!localStorage.getItem('currentUser')) return alert("Vui lòng đăng nhập!");
+            currentFish = { key, name, price };
+            document.getElementById('buy-title').innerText = name;
+            document.getElementById('buy-price-info').innerText = "Giá: " + price.toLocaleString() + "đ";
+            calculateTotal();
+            openModal('buy-overlay');
+        };
+
+        window.calculateTotal = () => {
+            const qty = document.getElementById('order-qty').value;
+            document.getElementById('buy-total').innerText = (qty * currentFish.price).toLocaleString() + "đ";
+        };
+
+        window.confirmPurchase = async () => {
+            const qty = parseInt(document.getElementById('order-qty').value);
+            const user = localStorage.getItem('currentUser');
+            const userSnap = await get(child(ref(db), `users/${user}`));
+            const fishSnap = await get(child(ref(db), `fishes/${currentFish.key}`));
+            const total = qty * currentFish.price;
+            
+            if(fishSnap.val().stock < qty) return alert("Hết hàng!");
+            if(userSnap.val().balance < total) return alert("Không đủ tiền!");
+
+            await update(ref(db, `users/${user}`), { balance: userSnap.val().balance - total });
+            await update(ref(db, `fishes/${currentFish.key}`), { stock: fishSnap.val().stock - qty });
+            const id = Date.now();
+            await set(ref(db, 'orders/' + id), { id, user, product: currentFish.name, qty, price: total, status: 'Chờ xử lý', time: new Date().toLocaleString() });
+            alert("Đặt hàng thành công!");
+            closeModals();
+        };
+
+        // Khởi tạo ứng dụng
+        const cur = localStorage.getItem('currentUser');
         onValue(ref(db, 'fishes'), (snap) => {
             const grid = document.getElementById('product-list');
             grid.innerHTML = '';
             for(let k in snap.val()){
                 const f = snap.val()[k];
                 grid.innerHTML += `<div class="fish-card">
-                    <img src="${f.img}">
-                    <h3>${f.name}</h3>
-                    <p style="color:red; font-weight:bold">${f.price.toLocaleString()}đ</p>
-                    <button class="btn-buy" onclick="alert('Chức năng mua đang bảo trì')">MUA NGAY</button>
-                </div>`;
+                    <img src="${f.img}"><div style="padding:15px">
+                    <h3>${f.name}</h3><p class="price">${f.price.toLocaleString()}đ</p>
+                    <p style="font-size:12px; color:#999">Còn lại: ${f.stock}</p>
+                    <button class="btn-auth" style="width:100%; margin:0" onclick="buyFishTrigger('${k}','${f.name}',${f.price})">MUA NGAY</button>
+                </div></div>`;
             }
         });
 
-        // Xử lý khi đã đăng nhập
         if(cur) {
-            document.getElementById('btn-login-main').style.display = 'none';
-            document.getElementById('user-info').style.display = 'block';
             document.getElementById('menu-history').style.display = 'block';
+            document.getElementById('auth-buttons').style.display = 'none';
+            document.getElementById('user-info-bar').style.display = 'block';
             document.getElementById('display-name').innerText = cur;
-
+            
             onValue(ref(db, `users/${cur}`), snap => {
                 document.getElementById('display-balance').innerText = snap.val().balance.toLocaleString();
+                if(snap.val().role === 'admin') document.getElementById('admin-panel').style.display = 'block';
             });
 
             onValue(ref(db, 'orders'), snap => {
                 const orders = Object.values(snap.val() || {}).reverse();
-                let tableHtml = `<table><tr><th>Ngày</th><th>Tên Cá</th><th>SL</th><th>Giá</th><th>Trạng thái</th></tr>`;
-                
+                // Lịch sử người dùng
+                let h = `<table class="history-table"><tr><th>Thời gian</th><th>Sản phẩm</th><th>SL</th><th>Tổng tiền</th><th>Trạng thái</th></tr>`;
                 orders.filter(o => o.user === cur).forEach(o => {
-                    const statusClass = o.status === 'Xong' ? 'done' : 'pending';
-                    tableHtml += `<tr>
-                        <td style="font-size:12px">${o.time}</td>
-                        <td><b>${o.product}</b></td>
-                        <td>${o.qty}</td>
-                        <td>${o.price.toLocaleString()}đ</td>
-                        <td><span class="status-pill ${statusClass}">${o.status}</span></td>
-                    </tr>`;
+                    const stClass = o.status === 'Chờ xử lý' ? 'status-pending' : (o.status === 'Đang giao' ? 'status-shipping' : 'status-done');
+                    h += `<tr><td>${o.time}</td><td><b>${o.product}</b></td><td>${o.qty}</td><td>${o.price.toLocaleString()}đ</td>
+                    <td><span class="status-pill ${stClass}">${o.status}</span></td></tr>`;
                 });
-                document.getElementById('user-order-list').innerHTML = tableHtml + `</table>`;
+                document.getElementById('user-order-list').innerHTML = h + `</table>`;
             });
         }
     </script>
